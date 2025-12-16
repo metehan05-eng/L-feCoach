@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ödeme Başarılı - LifeCoach AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .success-icon {
+            font-size: 4rem;
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+        .success-title {
+            font-size: 2rem;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        .success-message {
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1 class="success-title">Ödeme Başarılı!</h1>
+        <p class="success-message">
+            Premium üyeliğiniz başarıyla aktifleştirildi. Artık tüm premium özelliklere sınırsız erişiminiz var!
+            <br><br>
+            Hayatınızı değiştirecek yolculuğunuzda size destek olmak için buradayız.
+        </p>
+        <a href="/" class="btn">LifeCoach AI'ya Dön</a>
+    </div>
+
+    <script>
+        // Auto redirect after 5 seconds
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 5000);
+    </script>
+</body>
+</html>

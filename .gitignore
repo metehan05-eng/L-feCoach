@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment files
+.env
+backend/.env
+
+# Database
+backend/lifecoach.db
+lifecoach.db
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Executables
+*.exe
+ollama-installer.exe
