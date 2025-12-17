@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. CONFIGURATION & STATE ---
     const config = {
-        BACKEND_URL: 'http://localhost:8000',
+        BACKEND_URL: window.location.origin,
         INACTIVITY_TIMEOUT: 120000 // 2 minutes
     };
 
