@@ -113,11 +113,13 @@ async def chat(message: ChatMessage, current_user: str = Depends(get_current_use
             try:
                 async with httpx.AsyncClient(timeout=60.0) as client:
                     resp = await client.post(url, headers=headers, json=payload)
+                    print(f"Gemini API response status: {resp.status_code}")
                     if resp.status_code != 200:
-                        logging.debug(f"Gemini API returned status {resp.status_code}: {resp.text}")
+                        print(f"Gemini API returned status {resp.status_code}: {resp.text}")
                         return None
 
                     data = resp.json()
+                    print(f"Gemini API response: {data}")
                     if "candidates" in data and len(data["candidates"]) > 0:
                         candidate = data["candidates"][0]
                         if "content" in candidate and "parts" in candidate["content"]:
@@ -126,7 +128,7 @@ async def chat(message: ChatMessage, current_user: str = Depends(get_current_use
                                 return parts[0]["text"].strip()
 
             except Exception as e:
-                logging.debug(f"Gemini call failed: {e}")
+                print(f"Gemini call failed: {e}")
 
             return None
 
