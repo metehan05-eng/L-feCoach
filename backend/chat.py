@@ -16,6 +16,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 # Read Gemini configuration
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+print(f"GEMINI_API_KEY loaded: {bool(GEMINI_API_KEY)}")
 
 class ChatMessage(BaseModel):
     message: str
@@ -104,7 +105,7 @@ async def chat(message: ChatMessage, current_user: str = Depends(get_current_use
             if not GEMINI_API_KEY:
                 return None
 
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={GEMINI_API_KEY}"
             headers = {"Content-Type": "application/json"}
             payload = {
                 "contents": [{"parts": [{"text": prompt}]}]
@@ -139,7 +140,7 @@ async def chat(message: ChatMessage, current_user: str = Depends(get_current_use
                 gemini_text = gemini_text.strip()
                 if gemini_text and gemini_text.lower() != message.message.lower():
                     ai_response = gemini_text
-                    response_payload = {"text": ai_response, "source": "gemini", "model": "gemini-1.5-flash"}
+                    response_payload = {"text": ai_response, "source": "gemini", "model": "gemini-1.5-pro"}
 
                     # Save history and return
                     async with async_session() as session:
