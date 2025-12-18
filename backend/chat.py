@@ -14,9 +14,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
-# Read OpenRouter configuration
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL") or "meta-llama/llama-3.3-70b-instruct:free"
+# Read Gemini configuration
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 class ChatMessage(BaseModel):
     message: str
@@ -100,49 +99,45 @@ async def chat(message: ChatMessage, current_user: str = Depends(get_current_use
         # Try Ollama local server first (if available). Otherwise use built-in fallbacks.
         msg = message.message.lower()
 
-        async def call_openrouter(prompt: str) -> str | None:
-            """Call OpenRouter API for AI response."""
-            if not OPENROUTER_API_KEY:
+        async def call_gemini(prompt: str) -> str | None:
+            """Call Google Gemini API for AI response."""
+            if not GEMINI_API_KEY:
                 return None
 
-            url = "https://openrouter.ai/api/v1/chat/completions"
-            headers = {
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-            }
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+            headers = {"Content-Type": "application/json"}
             payload = {
-                "model": OPENROUTER_MODEL,
-                "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 256,
-                "temperature": 0.7,
+                "contents": [{"parts": [{"text": prompt}]}]
             }
 
             try:
                 async with httpx.AsyncClient(timeout=60.0) as client:
                     resp = await client.post(url, headers=headers, json=payload)
                     if resp.status_code != 200:
-                        logging.debug(f"OpenRouter API returned status {resp.status_code}: {resp.text}")
+                        logging.debug(f"Gemini API returned status {resp.status_code}: {resp.text}")
                         return None
 
                     data = resp.json()
-                    if "choices" in data and len(data["choices"]) > 0:
-                        choice = data["choices"][0]
-                        if "message" in choice and "content" in choice["message"]:
-                            return choice["message"]["content"].strip()
+                    if "candidates" in data and len(data["candidates"]) > 0:
+                        candidate = data["candidates"][0]
+                        if "content" in candidate and "parts" in candidate["content"]:
+                            parts = candidate["content"]["parts"]
+                            if len(parts) > 0 and "text" in parts[0]:
+                                return parts[0]["text"].strip()
 
             except Exception as e:
-                logging.debug(f"OpenRouter call failed: {e}")
+                logging.debug(f"Gemini call failed: {e}")
 
             return None
 
-        # Try OpenRouter and use its response if it's meaningful (not just echo)
+        # Try Gemini and use its response if it's meaningful (not just echo)
         try:
-            openrouter_text = await call_openrouter(message.message)
-            if openrouter_text:
-                openrouter_text = openrouter_text.strip()
-                if openrouter_text and openrouter_text.lower() != message.message.lower():
-                    ai_response = openrouter_text
-                    response_payload = {"text": ai_response, "source": "openrouter", "model": OPENROUTER_MODEL}
+            gemini_text = await call_gemini(message.message)
+            if gemini_text:
+                gemini_text = gemini_text.strip()
+                if gemini_text and gemini_text.lower() != message.message.lower():
+                    ai_response = gemini_text
+                    response_payload = {"text": ai_response, "source": "gemini", "model": "gemini-1.5-flash"}
 
                     # Save history and return
                     async with async_session() as session:
